@@ -1,0 +1,29 @@
+//created on: 2015-9-2
+package come.sample
+
+//list any import classes here.
+
+import com.yicai.dao.*;
+
+//declare any global variables here
+
+
+
+
+rule "Your First Rule"
+
+    when
+        //conditions
+    then
+        //actions
+
+end
+
+rule "Your Second Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+    then
+        //actions
+
+end
