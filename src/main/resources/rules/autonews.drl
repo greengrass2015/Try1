@@ -4,26 +4,68 @@ package come.sample
 //list any import classes here.
 
 import com.yicai.dao.*;
+import java.text.DecimalFormat;
+import java.math.*;
+
 
 //declare any global variables here
 
 
+function String formatVariation(double percentage ){
+	DecimalFormat df  = new DecimalFormat("##0.0");
+	return df.format(Math.abs(percentage));
+}
+function String trendOfVariation(double percentage ){
+	String trend;
+	if (percentage > 100){
 
+		trend = "增加";
+	} else if(percentage < 100){
+		trend = "减少";	
+	} else{
+		trend = "持平";
+	}
+	return trend;
+}
 
-rule "Your First Rule"
-
+rule "Rule for 1st Angle"
+no-loop true
+salience 1000
     when
         //conditions
+        $cpi1:CPIData($cp1:overallCPI, $mon:month, comparisonType == "同比")
+        $cpi2:CPIData($cp2:overallCPI, month == $mon, comparisonType == "环比")
+        $ppi1:PPIData($pp1:overallPPI, month == $mon, comparisonType == "同比")
+        $ppi2:PPIData($pp2:overallPPI, month == $mon, comparisonType == "环比")
+//        $dy=$cp1-100;
     then
+        
         //actions
+        System.out.println("根据国家统计局公布的数据,"+ $mon+"月份CPI"+$cpi1.getComparisonType()
+        +trendOfVariation($cp1)+formatVariation($cp1-100)+"%,"+$cpi2.getComparisonType()
+        +trendOfVariation($cp2)+formatVariation($cp2-100)+"%;"+"PPI"+$ppi1.getComparisonType()
+        +trendOfVariation($pp1)+formatVariation($pp1-100)+"%,"+$ppi2.getComparisonType()
+        +trendOfVariation($pp2)+formatVariation($pp2-100)+"%。");
 
 end
-
-rule "Your Second Rule"
+// query one specified type of index in CPIData object.
+/*
+query "foodCPI index over the threshhold 101"
+	CPI: CPIData(foodCPI > 101.0)
+end
+//query any type of index that is greater than 101.0 in CPIData　object
+query anyindex (double index)
+  $index: CPIData(index > 101.0)
+end
+*/
+rule "Rule for 2nd Angle (CPI 同比上涨)"
     //include attributes such as "salience" here...
     when
+    	$cpi1:CPIData($cp1:overallCPI, $mon:month, comparisonType == "同比")
+    	$cpi2:CPIData($cp2:overallCPI, month == $mon-1, comparisonType == "同比")
+    	eval($cp1 > $cp2)
         //conditions
     then
         //actions
-
+        System.out.println("从同比看,"+$mon+"月份CPI涨幅比上月扩大"+formatVariation($cp1-$cp2)+"个百分点。"); 
 end

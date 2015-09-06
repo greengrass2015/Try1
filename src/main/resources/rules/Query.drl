@@ -1,0 +1,8 @@
+//created on: 2015-9-6
+/*
+package com.sample
+import com.yicai.dao.*;
+
+query largeVariation( double $d )
+    $d := CPIData($id, $name, $x, $y;)
+end*/
